@@ -24,6 +24,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	//		"github.com/aws/aws-sdk-go/aws"
@@ -57,8 +58,25 @@ var iamlsCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		var maxUsernameLen int
 		for _, user := range result.Users {
-			fmt.Println("User name:", *user.UserName)
+			if len(*user.UserName) > maxUsernameLen {
+				maxUsernameLen = len(*user.UserName)
+			}
+		}
+		var columnWidth int = 15
+		if maxUsernameLen > columnWidth {
+			columnWidth = maxUsernameLen
+		}
+		fmt.Printf("USERNAME%sLAST LOGIN\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
+		fmt.Printf("--------%s----------\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
+		for _, user := range result.Users {
+			if user.PasswordLastUsed == nil {
+				fmt.Printf("%s%s%s\n", *user.UserName, strings.Repeat(" ", columnWidth-len(*user.UserName)), "NEVER")
+			} else {
+				fmt.Printf("%s%s%s\n", *user.UserName, strings.Repeat(" ", columnWidth-len(*user.UserName)), user.PasswordLastUsed)
+			}
+
 		}
 	},
 }
