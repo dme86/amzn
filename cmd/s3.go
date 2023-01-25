@@ -33,6 +33,7 @@ import (
 
 const (
 	YYYYMMDD = "2006-01-02"
+	HHMMSS = "12:05:03"
 )
 
 var noHeader bool
@@ -76,7 +77,7 @@ var s3lsCmd = &cobra.Command{
 			fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "-----------", "-------------")
 		}
 		for _, b := range result.Buckets {
-			fmt.Printf("%*s %s\n", -longestBucketName, aws.StringValue(b.Name), b.CreationDate.Format(YYYYMMDD))
+			fmt.Printf("%*s %s %s\n", -longestBucketName, aws.StringValue(b.Name), b.CreationDate.Format(YYYYMMDD), b.CreationDate.Format("15:04:05"))
 		}
 	},
 }
