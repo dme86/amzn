@@ -24,30 +24,31 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
-		"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/spf13/cobra"
 )
 
-var noHeaders bool
 
 const (
 	YYYYMMDD = "2006-01-02"
 )
 
+var noHeader bool
 
 // s3Cmd represents the s3 command
 var s3Cmd = &cobra.Command{
 	Use:   "s3",
 	Short: "List of S3 buckets with creation date",
-	Long: `Foo`,
+	Long:  `Foo`,
 	Run: func(cmd *cobra.Command, args []string) {
 		sess := session.Must(session.NewSessionWithOptions(session.Options{
 			SharedConfigState: session.SharedConfigEnable,
 		}))
 
 		svc := s3.New(sess)
+
 
 		result, err := svc.ListBuckets(nil)
 		if err != nil {
@@ -61,7 +62,7 @@ var s3Cmd = &cobra.Command{
 				longestBucketName = len(aws.StringValue(b.Name))
 			}
 		}
-		if !noHeaders {
+		if !noHeader {
 			fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "BUCKET NAME", "CREATION DATE")
 			fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "-----------", "-------------")
 		}
@@ -70,9 +71,6 @@ var s3Cmd = &cobra.Command{
 		}
 	},
 }
-
-
-
 
 func init() {
 	rootCmd.AddCommand(s3Cmd)
@@ -85,5 +83,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	s3Cmd.Flags().BoolP("no-headers", "n", false, "disable header for output")
+	s3Cmd.Flags().BoolVarP(&noHeader, "no-header", "", false, "Do not print column headers")
 }
