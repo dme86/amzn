@@ -24,7 +24,7 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	//		"github.com/aws/aws-sdk-go/aws"
@@ -57,37 +57,42 @@ var iamlsCmd = &cobra.Command{
 			fmt.Println("Error", err)
 			os.Exit(1)
 		}
+		// Print the column headers
+		fmt.Printf("%-20s %-20s %-5s\n", "USERNAME", "LAST LOGIN", "MFA")
 
-		var maxUsernameLen int
+		// Loop through the list of users and print their details
 		for _, user := range result.Users {
-			if len(*user.UserName) > maxUsernameLen {
-				maxUsernameLen = len(*user.UserName)
+			// Get the user's login profile
+			userProfile, err := svc.GetUser(&iam.GetUserInput{
+				UserName: user.UserName,
+			})
+			if err != nil {
+				fmt.Println("Error", err)
+				continue
 			}
+
+			// Get the user's MFA status
+			mfa, err := svc.ListMFADevices(&iam.ListMFADevicesInput{
+				UserName: user.UserName,
+			})
+			if err != nil {
+				fmt.Println("Error", err)
+				continue
+			}
+
+			// Print the user's details
+			if userProfile.User.PasswordLastUsed != nil {
+				fmt.Printf("%-20s %-20s", *user.UserName, userProfile.User.PasswordLastUsed.Format(time.RFC1123))
+			} else {
+				fmt.Printf("%-20s %-20s", *user.UserName, "NEVER")
+			}
+			if len(mfa.MFADevices) > 0 {
+				fmt.Printf("%-5s\n", "YES")
+			} else {
+				fmt.Printf("%-5s\n", "NO")
+			}
+
 		}
-		var columnWidth int = 15
-		if maxUsernameLen > columnWidth {
-			columnWidth = maxUsernameLen
-		}
-		fmt.Printf("USERNAME%sLAST LOGIN MFA\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
-		fmt.Printf("--------%s----------\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
-
-   for _, user := range result.Users {
-        if user.PasswordLastUsed == nil {
-            fmt.Printf("%s%s%s",*user.UserName,strings.Repeat(" ", columnWidth-len(*user.UserName)),"NEVER")
-        } else {
-            fmt.Printf("%s%s%s",*user.UserName,strings.Repeat(" ", columnWidth-len(*user.UserName)),user.PasswordLastUsed)
-        }
-        // check if the user has MFA enabled
-        mfa, _ := svc.ListMFADevices(&iam.ListMFADevicesInput{UserName: user.UserName})
-        if len(mfa.MFADevices) > 0 {
-            fmt.Printf("\tYES\n")
-        } else {
-		fmt.Printf("\tNO\n")
-	}
-}
-
-
-
 	},
 }
 
