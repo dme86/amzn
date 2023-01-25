@@ -26,7 +26,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-//		"github.com/aws/aws-sdk-go/aws"
+	//		"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 )
@@ -35,37 +35,37 @@ import (
 var iamCmd = &cobra.Command{
 	Use:   "iam",
 	Short: "A brief description of your command",
-	Long: `Foo`,
+	Long:  `Foo`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.HelpFunc()(cmd, args)
 	},
 }
 
 var iamlsCmd = &cobra.Command{
-    Use:   "ls",
-    Short: "List iam users",
-    Run: func(cmd *cobra.Command, args []string) {
-	    	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	Use:   "ls",
+	Short: "List iam users",
+	Run: func(cmd *cobra.Command, args []string) {
+		sess := session.Must(session.NewSessionWithOptions(session.Options{
+			SharedConfigState: session.SharedConfigEnable,
+		}))
 
-	svc := iam.New(sess)
+		svc := iam.New(sess)
 
-	result, err := svc.ListUsers(&iam.ListUsersInput{})
-	if err != nil {
-		fmt.Println("Error", err)
-		os.Exit(1)
-	}
+		result, err := svc.ListUsers(&iam.ListUsersInput{})
+		if err != nil {
+			fmt.Println("Error", err)
+			os.Exit(1)
+		}
 
-	for _, user := range result.Users {
-		fmt.Println("User name:", *user.UserName)
-	}
-},
+		for _, user := range result.Users {
+			fmt.Println("User name:", *user.UserName)
+		}
+	},
 }
 
 func init() {
 	rootCmd.AddCommand(iamCmd)
-        iamCmd.AddCommand(iamlsCmd)
+	iamCmd.AddCommand(iamlsCmd)
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -35,7 +35,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "amzn",
 	Short: "Minimal aws CLI",
-	Long: `Foo`,
+	Long:  `Foo`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

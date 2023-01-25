@@ -30,10 +30,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 const (
 	YYYYMMDD = "2006-01-02"
-	HHMMSS = "12:05:03"
+	HHMMSS   = "12:05:03"
 )
 
 var noHeader bool
@@ -48,17 +47,15 @@ var s3Cmd = &cobra.Command{
 	},
 }
 
-
 var s3lsCmd = &cobra.Command{
-    Use:   "ls",
-    Short: "List S3 buckets",
-    Run: func(cmd *cobra.Command, args []string) {
+	Use:   "ls",
+	Short: "List S3 buckets",
+	Run: func(cmd *cobra.Command, args []string) {
 		sess := session.Must(session.NewSessionWithOptions(session.Options{
 			SharedConfigState: session.SharedConfigEnable,
 		}))
 
 		svc := s3.New(sess)
-
 
 		result, err := svc.ListBuckets(nil)
 		if err != nil {
@@ -81,8 +78,6 @@ var s3lsCmd = &cobra.Command{
 		}
 	},
 }
-
-
 
 func init() {
 	rootCmd.AddCommand(s3Cmd)
