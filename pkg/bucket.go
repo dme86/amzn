@@ -23,7 +23,7 @@ func init() {
 }
 
 var listBucketsCmd = &cobra.Command{
-	Use:   "list-buckets",
+	Use:   "ls",
 	Short: "Lists the names and creation dates of all S3 buckets",
 	Run: func(cmd *cobra.Command, args []string) {
 		sess := session.Must(session.NewSessionWithOptions(session.Options{
