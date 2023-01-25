@@ -68,16 +68,26 @@ var iamlsCmd = &cobra.Command{
 		if maxUsernameLen > columnWidth {
 			columnWidth = maxUsernameLen
 		}
-		fmt.Printf("USERNAME%sLAST LOGIN\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
+		fmt.Printf("USERNAME%sLAST LOGIN MFA\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
 		fmt.Printf("--------%s----------\n", strings.Repeat(" ", columnWidth-len("USERNAME")))
-		for _, user := range result.Users {
-			if user.PasswordLastUsed == nil {
-				fmt.Printf("%s%s%s\n", *user.UserName, strings.Repeat(" ", columnWidth-len(*user.UserName)), "NEVER")
-			} else {
-				fmt.Printf("%s%s%s\n", *user.UserName, strings.Repeat(" ", columnWidth-len(*user.UserName)), user.PasswordLastUsed)
-			}
 
-		}
+   for _, user := range result.Users {
+        if user.PasswordLastUsed == nil {
+            fmt.Printf("%s%s%s",*user.UserName,strings.Repeat(" ", columnWidth-len(*user.UserName)),"NEVER")
+        } else {
+            fmt.Printf("%s%s%s",*user.UserName,strings.Repeat(" ", columnWidth-len(*user.UserName)),user.PasswordLastUsed)
+        }
+        // check if the user has MFA enabled
+        mfa, _ := svc.ListMFADevices(&iam.ListMFADevicesInput{UserName: user.UserName})
+        if len(mfa.MFADevices) > 0 {
+            fmt.Printf("\tYES\n")
+        } else {
+		fmt.Printf("\tNO\n")
+	}
+}
+
+
+
 	},
 }
 
