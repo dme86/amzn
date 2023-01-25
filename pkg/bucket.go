@@ -9,8 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var noHeaders bool
+
 const (
-    YYYYMMDD = "2006-01-02"
+	YYYYMMDD = "2006-01-02"
 )
 
 var RootCmd = &cobra.Command{
@@ -18,8 +20,9 @@ var RootCmd = &cobra.Command{
 	Short: "Minimal aws CLI",
 }
 
-func init() {
+func Init() {
 	RootCmd.AddCommand(listBucketsCmd)
+	RootCmd.PersistentFlags().BoolVarP(&noHeaders, "no-headers", "n", false, "disable output of header")
 }
 
 var listBucketsCmd = &cobra.Command{
@@ -44,12 +47,12 @@ var listBucketsCmd = &cobra.Command{
 				longestBucketName = len(aws.StringValue(b.Name))
 			}
 		}
-
-		fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "BUCKET NAME", "CREATION DATE")
-		fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "-----------", "-------------")
+		if !noHeaders {
+			fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "BUCKET NAME", "CREATION DATE")
+			fmt.Printf("%-"+fmt.Sprintf("%d", longestBucketName)+"s %-20s\n", "-----------", "-------------")
+		}
 		for _, b := range result.Buckets {
 			fmt.Printf("%*s %s\n", -longestBucketName, aws.StringValue(b.Name), b.CreationDate.Format(YYYYMMDD))
 		}
 	},
 }
-

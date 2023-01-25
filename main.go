@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
+	bucket.Init()
 	bucket.RootCmd.Execute()
 }
-
