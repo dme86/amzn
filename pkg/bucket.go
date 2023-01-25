@@ -14,8 +14,8 @@ const (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "myapp",
-	Short: "My App",
+	Use:   "amzn",
+	Short: "Minimal aws CLI",
 }
 
 func init() {
