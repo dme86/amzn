@@ -43,6 +43,15 @@ var s3Cmd = &cobra.Command{
 	Short: "List of S3 buckets with creation date",
 	Long:  `Foo`,
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.HelpFunc()(cmd, args)
+	},
+}
+
+
+var s3lsCmd = &cobra.Command{
+    Use:   "ls",
+    Short: "List S3 buckets",
+    Run: func(cmd *cobra.Command, args []string) {
 		sess := session.Must(session.NewSessionWithOptions(session.Options{
 			SharedConfigState: session.SharedConfigEnable,
 		}))
@@ -72,6 +81,8 @@ var s3Cmd = &cobra.Command{
 	},
 }
 
+
+
 func init() {
 	rootCmd.AddCommand(s3Cmd)
 
@@ -84,4 +95,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	s3Cmd.Flags().BoolVarP(&noHeader, "no-header", "", false, "Do not print column headers")
+	s3Cmd.AddCommand(s3lsCmd)
 }
